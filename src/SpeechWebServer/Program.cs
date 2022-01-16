@@ -1,4 +1,4 @@
-﻿using AudioSwitcher.AudioApi.CoreAudio;
+﻿// using AudioSwitcher.AudioApi.CoreAudio;
 using Speech;
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,9 @@ namespace SpeechWebServer
 {
     class Program
     {
-        static IEnumerable<CoreAudioDevice> devices;
+        // static IEnumerable<CoreAudioDevice> devices;
         static int port = 1000;
+        static bool finished = false;
 
         static void Main(string[] args)
         {
@@ -42,12 +43,12 @@ namespace SpeechWebServer
             // 接続先スピーカーの列挙
             Console.WriteLine("接続先スピーカー");
             Console.WriteLine("-----");
-            devices = new CoreAudioController().GetPlaybackDevices();
-            string speaker = (devices.ToArray())[0].FullName;
-            foreach (var d in devices)
-            {
-                Console.WriteLine($"{d.FullName}");
-            }
+            // devices = new CoreAudioController().GetPlaybackDevices();
+            // string speaker = (devices.ToArray())[0].FullName;
+            // foreach (var d in devices)
+            // {
+            //     Console.WriteLine($"{d.FullName}");
+            // }
             Console.WriteLine("-----");
 
             // 待ち受けIPアドレス
@@ -113,9 +114,9 @@ namespace SpeechWebServer
                     string location = "";
                     if (queryString["speaker"] != null)
                     {
-                        speaker = queryString["speaker"];
-                        ChangeSpeaker(speaker);
-                        location = $"@{speaker}";
+                        // speaker = queryString["speaker"];
+                        // ChangeSpeaker(speaker);
+                        // location = $"@{speaker}";
                     }
                     if (queryString["pitch"] != null)
                     {
@@ -145,8 +146,29 @@ namespace SpeechWebServer
                     response.ContentType = "text/plain; charset=utf-8";
                     byte[] content = Encoding.UTF8.GetBytes(voiceText);
                     
-                    response.OutputStream.Write(content, 0, content.Length);
-                    OneShotPlayMode(voiceName,engineName, voiceText, ep);
+                    // response.OutputStream.Write(content, 0, content.Length);
+
+                    string _fileName = "record.wav";
+                    Task t = RecordMode(voiceName, voiceText, _fileName);
+                    t.Wait();
+
+                    while (true)
+                    {
+                        if (finished == true)
+                        {
+                            break;
+                        }
+                    }
+
+                    response.ContentType = "audio/wave";
+                    string ext = ".wav";
+                    DateTime dt = DateTime.Now;
+                    string _fileName2 = dt.ToString("yyyy-MM-dd_HH-mm-ss");
+                    response.AddHeader("Content-Disposition", "attachment; filename=\"" + _fileName2 + ext);
+                    byte[] content2 = File.ReadAllBytes(_fileName);
+                    response.OutputStream.Write(content2, 0, content2.Length);
+                    finished = false;
+
                 }
                 catch (Exception ex)
                 {
@@ -209,7 +231,7 @@ namespace SpeechWebServer
             engine.Play(text);
 
         }
-        public static void RecordMode(string libraryName, string text, string outputFilename)
+        public static async Task RecordMode(string libraryName, string text, string outputFilename)
         {
             SoundRecorder recorder = new SoundRecorder(outputFilename);
             recorder.PostWait = 300;
@@ -227,20 +249,21 @@ namespace SpeechWebServer
             {
                 recorder.Stop();
                 engine.Dispose();
+                finished = true;
             };
             recorder.Start();
             engine.Play(text);
         }
         private static void ChangeSpeaker(string name)
         {
-            var speakers = (from c in devices
-                            where c.FullName.IndexOf(name) >= 0
-                            select c).ToArray();
-            if (speakers.Length > 0)
-            {
-                speakers[0].SetAsDefault();
-            }
-            else
+            // var speakers = (from c in devices
+            //                 where c.FullName.IndexOf(name) >= 0
+            //                 select c).ToArray();
+            // if (speakers.Length > 0)
+            // {
+            //     speakers[0].SetAsDefault();
+            // }
+            // else
             {
                 Console.WriteLine("Speaker not found.");
             }

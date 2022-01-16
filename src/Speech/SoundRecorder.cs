@@ -69,7 +69,7 @@ namespace Speech
         {
             OutputPath = filename;
         }
-        public async Task Start()
+        public void Start()
         {
             _finished = false;
             _capture = new WasapiLoopbackCapture();
@@ -85,15 +85,15 @@ namespace Speech
                 _writer.Dispose();
                 _finished = true;
             };
-            await Task.Delay((int)PreWait);
+            Thread.Sleep((int)PreWait);
             Mute();
             _capture.StartRecording();
         }
-        public async Task Stop()
+        public void Stop()
         {
             if(_capture != null)
             {
-                await Task.Delay((int)PostWait);
+                Thread.Sleep((int)PostWait);
                 _capture.StopRecording();
                 _capture.Dispose();
                 while (!_finished)
@@ -110,8 +110,8 @@ namespace Speech
             {
                 if (disposing)
                 {
-                    Task t = Stop();
-                    t.Wait();
+                    // Task t = Stop();
+                    // t.Wait();
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
