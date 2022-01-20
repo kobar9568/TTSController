@@ -30,6 +30,10 @@ namespace Speech
         /// 再生を停止します
         /// </summary>
         void Stop();
+        void Save(string text);
+        /// <summary>
+        /// 音声を保存します
+        /// </summary>
         void Dispose();
         /// <summary>
         /// 音量を取得します

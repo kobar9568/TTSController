@@ -111,6 +111,13 @@ namespace Speech
         }
 
         /// <summary>
+        /// 合成した音声を保存します（音声保存ボタンを押す）
+        /// </summary>
+        public void Save(string text)
+        {
+        }
+
+        /// <summary>
         /// 音量を設定します
         /// </summary>
         /// <param name="value">0.0～2.0</param>

@@ -150,6 +150,13 @@ namespace Speech
             button["PerformClick"]();
         }
 
+        /// <summary>
+        /// 合成した音声を保存します（音声保存ボタンを押す）
+        /// </summary>
+        public void Save(string text)
+        {
+        }
+
         protected enum EffectType { Volume = 8, Speed = 9, Pitch = 10, PitchRange = 11}
         /// <summary>
         /// 音量を設定します

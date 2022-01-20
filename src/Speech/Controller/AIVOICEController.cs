@@ -224,6 +224,38 @@ namespace Speech
             stopButton.EmulateClick();
         }
 
+        /// <summary>
+        /// 合成した音声を保存します（音声保存ボタンを押す）
+        /// </summary>
+        /// <param name="text">再生する文字列</param>
+        public void Save(string text)
+        {
+            SetText2(text);
+        }
+        internal void SetText2(string text)
+        {
+            text = text.Trim() == "" ? "." : text;
+            string t = _libraryName + _promptString + text;
+            if (_queue.Count == 0)
+            {
+                //                WPFTextBox textbox = new WPFTextBox(_root.IdentifyFromLogicalTreeIndex(0, 4, 3, 6, 3, 0, 2));
+                WPFTextBox textbox = new WPFTextBox(_root.IdentifyFromLogicalTreeIndex(0, 4, 3, 6, 3, 0, 0, 0, 1, 2));
+
+                textbox.EmulateChangeText(t);
+
+                // 音声保存ボタンを押下する。
+                // A.I.VOICE Editor側で以下の設定としておくこと。
+                // 1.「ツール>環境設定>音声保存>音声保存時に毎回設定を表示する」を無効に設定。
+                // 2.「ツール>環境設定>メッセージ>メッセージ表示レベル」を「簡潔」に設定。
+                WPFButtonBase saveButton = new WPFButtonBase(_root.IdentifyFromLogicalTreeIndex(0, 4, 3, 6, 3, 0, 0, 0, 1, 3, 6));
+                saveButton.EmulateClick();
+            }
+            else
+            {
+                _queue.Enqueue(t);
+            }
+        }
+
         enum EffectType { Volume = 0, Speed = 1, Pitch = 2, PitchRange = 3 }
         /// <summary>
         /// 音量を設定します
