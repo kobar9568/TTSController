@@ -206,7 +206,7 @@ namespace SpeechWebServer
             {
                 engine.SetPitchRange(ep.PitchRange);
             }
-            engine.Play(text);
+            engine.Save(text);
 
         }
         public static void RecordMode(string libraryName, string text, string outputFilename)
